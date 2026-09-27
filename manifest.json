@@ -1,0 +1,10 @@
+{
+  "name": "Arctic Cloud Booking",
+  "short_name": "Arctic Booking",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "description": "App para reservar citas de barbería",
+  "icons": []
+}
