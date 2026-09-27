@@ -1,0 +1,1284 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arctic Cloud Booking</title>
+
+<style>
+:root{
+--bg-main:#1e293b;
+--bg-card:#283548;
+--bg-container:#111827;
+--text-main:#f8fafc;
+--text-muted:#94a3b8;
+--accent:#38bdf8;
+--green:#10b981;
+--red:#f43f5e;
+--border-color:#334155;
+}
+
+body{
+font-family:'Segoe UI',Roboto,Arial,sans-serif;
+background:linear-gradient(to bottom,#0f172a,#1e293b);
+margin:0;
+padding:2rem 1rem;
+color:var(--text-main);
+min-height:100vh;
+}
+
+.container{
+max-width:850px;
+margin:auto;
+background:var(--bg-container);
+padding:2.5rem;
+border-radius:16px;
+box-shadow:0 20px 25px -5px rgba(0,0,0,.5);
+border:1px solid var(--border-color);
+}
+
+.nav-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#0b0f19;
+padding:1.2rem 2rem;
+border-radius:10px;
+margin-bottom:2rem;
+border:1px solid var(--border-color);
+gap:10px;
+}
+
+.nav-bar h2{
+margin:0;
+font-size:1.3rem;
+color:#e2e8f0;
+}
+
+.btn{
+padding:.6rem 1.2rem;
+border:0;
+border-radius:8px;
+font-weight:600;
+cursor:pointer;
+text-decoration:none;
+display:inline-block;
+transition:.2s;
+font-size:.9rem;
+}
+
+.btn:hover{
+opacity:.9;
+transform:translateY(-1px);
+}
+
+.btn-primary{background:var(--accent);color:#0f172a}
+.btn-secondary{background:#334155;color:white}
+.btn-refresh{background:#0284c7;color:white}
+.btn-done{background:var(--green);color:white}
+.btn-undo{background:#475569;color:white}
+.btn-delete{background:var(--red);color:white}
+
+.view-section{display:none}
+.view-section.active{display:block}
+
+h3{
+border-bottom:1px solid var(--border-color);
+padding-bottom:.6rem;
+margin-top:2rem;
+color:#f1f5f9;
+font-size:1.1rem;
+text-transform:uppercase;
+}
+
+.combos-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:1rem;
+margin-top:1rem;
+}
+
+.combo-card{
+border:1px solid var(--border-color);
+border-radius:10px;
+padding:1.2rem;
+text-align:center;
+cursor:pointer;
+background:var(--bg-card);
+transition:.2s;
+}
+
+.combo-card:hover{border-color:var(--accent)}
+
+.combo-card.selected{
+border-color:var(--accent);
+background:#1e3a8a33;
+box-shadow:0 0 0 2px var(--accent);
+}
+
+.combo-title{
+font-weight:600;
+font-size:1rem;
+}
+
+.combo-price{
+color:var(--accent);
+font-weight:700;
+font-size:1.2rem;
+margin-top:.6rem;
+}
+
+.form-group{margin-top:1.2rem}
+
+.form-group label{
+display:block;
+margin-bottom:.5rem;
+font-weight:500;
+color:var(--text-muted);
+font-size:.9rem;
+text-transform:uppercase;
+}
+
+.form-group input{
+width:100%;
+padding:.8rem 1rem;
+background:var(--bg-card);
+border:1px solid var(--border-color);
+border-radius:8px;
+font-size:1rem;
+color:var(--text-main);
+box-sizing:border-box;
+outline:none;
+}
+
+.form-group input:focus{
+border-color:var(--accent);
+}
+
+.hours-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+margin-top:1rem;
+}
+
+@media(max-width:600px){
+.hours-grid{grid-template-columns:repeat(2,1fr)}
+.container{padding:1.2rem}
+.nav-bar{padding:1rem;flex-direction:column}
+}
+
+.hour-btn{
+padding:.8rem;
+border:none;
+border-radius:8px;
+font-weight:600;
+color:white;
+cursor:pointer;
+text-align:center;
+font-size:.9rem;
+}
+
+.hour-available{
+background:#065f46;
+border:1px solid #047857;
+}
+
+.hour-booked{
+background:#7f1d1d;
+border:1px solid #991b1b;
+cursor:not-allowed;
+opacity:.7;
+}
+
+.hour-selected{
+background:var(--accent)!important;
+color:#0f172a!important;
+}
+
+.actions-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:1.5rem;
+gap:10px;
+}
+
+.table-container{
+overflow-x:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:.5rem;
+background:var(--bg-card);
+}
+
+th,td{
+border:1px solid var(--border-color);
+padding:14px;
+text-align:left;
+vertical-align:middle;
+font-size:.95rem;
+}
+
+th{
+background:#0b0f19;
+font-weight:600;
+color:var(--text-muted);
+text-transform:uppercase;
+font-size:.8rem;
+}
+
+tr.completed-row{
+background:#064e3b33!important;
+color:#6ee7b7;
+}
+
+tr.completed-row td{
+text-decoration:line-through;
+}
+
+tr.completed-row td.actions-cell{
+text-decoration:none!important;
+}
+
+.whatsapp-link{
+color:#34d399;
+font-weight:600;
+text-decoration:none;
+}
+
+.badge-hour{
+background:#0f172a;
+border:1px solid var(--border-color);
+color:var(--accent);
+padding:.3rem .6rem;
+border-radius:6px;
+font-weight:bold;
+}
+
+.status-badge{
+display:inline-block;
+padding:.3rem .7rem;
+border-radius:6px;
+font-size:.75rem;
+font-weight:700;
+text-transform:uppercase;
+}
+
+.status-pending{
+background:#78350f;
+color:#fde68a;
+}
+
+.status-completed{
+background:#064e3b;
+color:#a7f3d0;
+}
+
+.loading{
+text-align:center;
+padding:2rem;
+color:var(--text-muted);
+}
+
+.success{
+background:#064e3b;
+border:1px solid #10b981;
+padding:1rem;
+border-radius:8px;
+margin-top:1rem;
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="nav-bar">
+
+<h2 id="nav-title">Arctic Cloud Booking // Citas</h2>
+
+<div>
+
+<button id="btn-switch-client"
+class="btn btn-primary"
+onclick="switchView('client')"
+style="display:none">
+📅 Reservar Cita
+</button>
+
+<button id="btn-switch-admin"
+class="btn btn-secondary"
+onclick="checkAdminAccess()">
+🔒 Panel Propietario
+</button>
+
+</div>
+</div>
+
+
+<!-- CLIENTE -->
+
+<div id="client-view" class="view-section active">
+
+<form id="booking-form" onsubmit="saveAppointment(event)">
+
+<h3>1. Selecciona tu Combo de Corte:</h3>
+
+<div class="combos-grid">
+
+<div class="combo-card"
+onclick="selectCombo(this,'Combo 1: Corte Normal',90)">
+<div class="combo-title">Combo 1: Corte Normal</div>
+<div class="combo-price">$90</div>
+</div>
+
+<div class="combo-card"
+onclick="selectCombo(this,'Combo 2: Corte Cero',100)">
+<div class="combo-title">Combo 2: Corte Cero</div>
+<div class="combo-price">$100</div>
+</div>
+
+<div class="combo-card"
+onclick="selectCombo(this,'Combo 3: Corte Navaja',120)">
+<div class="combo-title">Combo 3: Corte Navaja</div>
+<div class="combo-price">$120</div>
+</div>
+
+</div>
+
+
+<h3>2. Selecciona la Fecha:</h3>
+
+<div class="form-group">
+
+<input
+type="date"
+id="appointment-date"
+required
+onchange="loadOccupiedHours()">
+
+</div>
+
+
+<h3>
+3. Selecciona la Hora
+<span style="color:var(--green)">
+■ Verde: Disponible
+</span>
+|
+<span style="color:var(--red)">
+■ Rojo: Ocupada
+</span>
+</h3>
+
+<div id="hours-container" class="hours-grid"></div>
+
+
+<h3 style="margin-top:2.5rem">
+Datos del Cliente:
+</h3>
+
+<div class="form-group">
+
+<label>Nombre Completo:</label>
+
+<input
+type="text"
+id="client-name"
+required
+placeholder="Ej. Carlos Pérez">
+
+</div>
+
+
+<div class="form-group">
+
+<label>Correo Electrónico:</label>
+
+<input
+type="email"
+id="client-email"
+required
+placeholder="correo@ejemplo.com">
+
+</div>
+
+
+<div class="form-group">
+
+<label>Número de Teléfono:</label>
+
+<input
+type="tel"
+id="client-phone"
+required
+placeholder="+504 9988-7766">
+
+</div>
+
+
+<div id="success-message" class="success">
+✅ ¡Cita registrada correctamente!
+</div>
+
+
+<button
+type="submit"
+class="btn btn-primary"
+style="width:100%;padding:1rem;margin-top:2rem;text-transform:uppercase">
+
+Confirmar y Agendar Cita
+
+</button>
+
+</form>
+
+</div>
+
+
+<!-- ADMIN -->
+
+<div id="admin-view" class="view-section">
+
+<div class="actions-bar">
+
+<h3>Base de Datos - Citas</h3>
+
+<button
+class="btn btn-refresh"
+onclick="loadAdminData()">
+
+🔄 Actualizar
+
+</button>
+
+</div>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+<th>#</th>
+<th>Cliente</th>
+<th>Contacto</th>
+<th>Servicio</th>
+<th>Fecha y Hora</th>
+<th>Estado / Acciones</th>
+</tr>
+
+</thead>
+
+<tbody id="table-body">
+
+<tr>
+<td colspan="6" class="loading">
+Cargando citas...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+// ========================================
+// URL DE GOOGLE APPS SCRIPT
+// ========================================
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxviFPo5CYthfkjN9uqXclmpUhRveYwRO-vIvl1Xj-iYhDKYe0d8rDO0W1l5cAhMYWI/exec";
+
+
+// ========================================
+// VARIABLES
+// ========================================
+
+let selectedComboData = null;
+let selectedHour = null;
+let cachedAppointments = [];
+
+const availableHoursList = [
+"8 am",
+"9 am",
+"10 am",
+"11 am",
+"12 pm",
+"1 pm",
+"2 pm",
+"3 pm",
+"4 pm",
+"5 pm",
+"6 pm",
+"7 pm",
+"8 pm",
+"9 pm",
+"10 pm"
+];
+
+
+// ========================================
+// FECHA ACTUAL
+// ========================================
+
+const todayStr =
+new Date().toISOString().split("T")[0];
+
+document.getElementById("appointment-date").min =
+todayStr;
+
+document.getElementById("appointment-date").value =
+todayStr;
+
+
+// ========================================
+// INICIO
+// ========================================
+
+window.onload = function(){
+
+loadOccupiedHours();
+
+};
+
+
+// ========================================
+// COMBO
+// ========================================
+
+function selectCombo(element,name,price){
+
+document
+.querySelectorAll(".combo-card")
+.forEach(c => c.classList.remove("selected"));
+
+element.classList.add("selected");
+
+selectedComboData = {
+name:name,
+price:price
+};
+
+}
+
+
+// ========================================
+// OBTENER CITAS
+// ========================================
+
+async function getAppointments(){
+
+try{
+
+const response =
+await fetch(API_URL + "?accion=citas");
+
+const data =
+await response.json();
+
+if(data.ok){
+
+cachedAppointments =
+data.citas || [];
+
+return cachedAppointments;
+
+}
+
+throw new Error(data.mensaje);
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"No se pudieron cargar las citas. Comprueba la conexión."
+);
+
+return [];
+
+}
+
+}
+
+
+// ========================================
+// HORARIOS
+// ========================================
+
+async function loadOccupiedHours(){
+
+const date =
+document.getElementById("appointment-date").value;
+
+const container =
+document.getElementById("hours-container");
+
+container.innerHTML =
+'<div class="loading">Consultando horarios...</div>';
+
+selectedHour = null;
+
+await getAppointments();
+
+const bookedHours =
+cachedAppointments
+.filter(a => a.date === date)
+.map(a => a.hour);
+
+container.innerHTML =
+availableHoursList.map(hour => {
+
+const isBooked =
+bookedHours.includes(hour);
+
+if(isBooked){
+
+return `
+<div class="hour-btn hour-booked">
+${hour} (Ocupada)
+</div>
+`;
+
+}
+
+return `
+<div
+class="hour-btn hour-available"
+onclick="selectHour('${hour}',this)">
+${hour}
+</div>
+`;
+
+}).join("");
+
+}
+
+
+// ========================================
+// SELECCIONAR HORA
+// ========================================
+
+function selectHour(hour,element){
+
+document
+.querySelectorAll(".hour-btn.hour-available")
+.forEach(b =>
+b.classList.remove("hour-selected")
+);
+
+element.classList.add("hour-selected");
+
+selectedHour = hour;
+
+}
+
+
+// ========================================
+// CAMBIAR VISTA
+// ========================================
+
+function switchView(view){
+
+document
+.getElementById("client-view")
+.classList.remove("active");
+
+document
+.getElementById("admin-view")
+.classList.remove("active");
+
+
+if(view === "client"){
+
+document
+.getElementById("client-view")
+.classList.add("active");
+
+document
+.getElementById("nav-title")
+.innerText =
+"Arctic Cloud Booking // Citas";
+
+document
+.getElementById("btn-switch-client")
+.style.display = "none";
+
+document
+.getElementById("btn-switch-admin")
+.style.display = "inline-block";
+
+loadOccupiedHours();
+
+}else{
+
+document
+.getElementById("admin-view")
+.classList.add("active");
+
+document
+.getElementById("nav-title")
+.innerText =
+"Panel del Propietario - Citas";
+
+document
+.getElementById("btn-switch-client")
+.style.display = "inline-block";
+
+document
+.getElementById("btn-switch-admin")
+.style.display = "none";
+
+loadAdminData();
+
+}
+
+}
+
+
+// ========================================
+// ACCESO ADMIN
+// ========================================
+
+function checkAdminAccess(){
+
+const password =
+prompt("Ingrese la contraseña del propietario:");
+
+if(password !== "1234"){
+
+alert("Contraseña incorrecta.");
+
+return;
+
+}
+
+switchView("admin");
+
+}
+
+
+// ========================================
+// GUARDAR CITA
+// ========================================
+
+async function saveAppointment(e){
+
+e.preventDefault();
+
+
+if(!selectedComboData){
+
+alert(
+"Por favor selecciona un combo de corte."
+);
+
+return;
+
+}
+
+
+if(!selectedHour){
+
+alert(
+"Por favor selecciona una hora disponible."
+);
+
+return;
+
+}
+
+
+const date =
+document.getElementById("appointment-date").value;
+
+
+const nombre =
+document.getElementById("client-name").value.trim();
+
+const email =
+document.getElementById("client-email").value.trim();
+
+const telefono =
+document.getElementById("client-phone").value.trim();
+
+
+try{
+
+// Revisar nuevamente antes de guardar
+
+await getAppointments();
+
+const occupied =
+cachedAppointments.some(app =>
+app.date === date &&
+app.hour === selectedHour
+);
+
+if(occupied){
+
+alert(
+"Lo sentimos, ese horario acaba de ser ocupado."
+);
+
+loadOccupiedHours();
+
+return;
+
+}
+
+
+const datos = {
+
+accion:"reservar",
+
+fecha:date,
+
+hora:selectedHour,
+
+nombre:nombre,
+
+email:email,
+
+telefono:telefono,
+
+servicio:selectedComboData.name,
+
+precio:selectedComboData.price
+
+};
+
+
+const response =
+await fetch(API_URL,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"text/plain;charset=utf-8"
+},
+
+body:JSON.stringify(datos)
+
+});
+
+
+const result =
+await response.json();
+
+
+if(!result.ok){
+
+alert(result.mensaje);
+
+loadOccupiedHours();
+
+return;
+
+}
+
+
+document
+.getElementById("success-message")
+.style.display = "block";
+
+
+alert(
+"¡Cita agendada correctamente!"
+);
+
+
+document
+.getElementById("booking-form")
+.reset();
+
+
+selectedComboData = null;
+
+selectedHour = null;
+
+
+document
+.querySelectorAll(".combo-card")
+.forEach(c =>
+c.classList.remove("selected")
+);
+
+
+setTimeout(() => {
+
+document
+.getElementById("success-message")
+.style.display = "none";
+
+},4000);
+
+
+loadOccupiedHours();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Error al guardar la cita: " + error.message
+);
+
+}
+
+}
+
+
+// ========================================
+// PANEL DEL PROPIETARIO
+// ========================================
+
+async function loadAdminData(){
+
+const tbody =
+document.getElementById("table-body");
+
+tbody.innerHTML = `
+<tr>
+<td colspan="6" class="loading">
+🔄 Cargando citas desde Google Sheets...
+</td>
+</tr>
+`;
+
+
+try{
+
+const apps =
+await getAppointments();
+
+
+if(apps.length === 0){
+
+tbody.innerHTML = `
+<tr>
+<td colspan="6" class="loading">
+No hay citas registradas todavía.
+</td>
+</tr>
+`;
+
+return;
+
+}
+
+
+apps.sort((a,b) =>
+String(a.date).localeCompare(String(b.date))
+);
+
+
+tbody.innerHTML =
+apps.map((app,index) => {
+
+const isCompleted =
+app.status === "Completada";
+
+const rowClass =
+isCompleted
+? "completed-row"
+: "";
+
+
+const statusHtml =
+isCompleted
+
+? `<span class="status-badge status-completed">
+✔ Realizado
+</span>`
+
+: `<span class="status-badge status-pending">
+⏳ Pendiente
+</span>`;
+
+
+const buttonHtml =
+isCompleted
+
+? `<button
+class="btn btn-undo"
+onclick="toggleStatus('${app.idDoc}','Pendiente')">
+↩ Deshacer
+</button>`
+
+: `<button
+class="btn btn-done"
+onclick="toggleStatus('${app.idDoc}','Completada')">
+✔ Realizada
+</button>`;
+
+
+const cleanPhone =
+String(app.phone || "")
+.replace(/\D/g,"");
+
+
+const whatsappMessage =
+encodeURIComponent(
+`Hola ${app.name}, te escribo respecto a tu cita en Arctic Booking para el ${app.date} a las ${app.hour}.`
+);
+
+
+return `
+
+<tr class="${rowClass}">
+
+<td>
+<strong>#${index+1}</strong>
+</td>
+
+<td>
+<strong>${escapeHtml(app.name)}</strong>
+</td>
+
+<td>
+
+📧 ${escapeHtml(app.email)}
+<br>
+
+📱
+
+<a
+href="https://wa.me/${cleanPhone}?text=${whatsappMessage}"
+target="_blank"
+class="whatsapp-link">
+
+${escapeHtml(app.phone)} 💬
+
+</a>
+
+</td>
+
+<td>
+
+${escapeHtml(app.comboName)}
+<br>
+
+<span style="color:var(--accent);font-weight:bold">
+$${app.price}
+</span>
+
+</td>
+
+<td>
+
+📅 ${app.date}
+<br>
+
+⏰
+
+<span class="badge-hour">
+${app.hour}
+</span>
+
+</td>
+
+<td class="actions-cell">
+
+${statusHtml}
+
+<br><br>
+
+${buttonHtml}
+
+<button
+class="btn btn-delete"
+onclick="deleteAppointment('${app.idDoc}')">
+
+🗑️ Eliminar
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}).join("");
+
+
+}catch(error){
+
+tbody.innerHTML = `
+<tr>
+<td colspan="6" class="loading">
+Error al cargar las citas.
+</td>
+</tr>
+`;
+
+}
+
+}
+
+
+// ========================================
+// CAMBIAR ESTADO
+// ========================================
+
+async function toggleStatus(idDoc,newStatus){
+
+try{
+
+const response =
+await fetch(API_URL,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"text/plain;charset=utf-8"
+},
+
+body:JSON.stringify({
+
+accion:"estado",
+
+id:idDoc,
+
+estado:newStatus
+
+})
+
+});
+
+
+const result =
+await response.json();
+
+
+if(!result.ok){
+
+alert(result.mensaje);
+
+return;
+
+}
+
+
+loadAdminData();
+
+
+}catch(error){
+
+alert(
+"Error al cambiar el estado."
+);
+
+}
+
+}
+
+
+// ========================================
+// ELIMINAR
+// ========================================
+
+async function deleteAppointment(idDoc){
+
+if(!confirm(
+"¿Estás seguro de eliminar esta cita?"
+)){
+
+return;
+
+}
+
+
+try{
+
+const response =
+await fetch(API_URL,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"text/plain;charset=utf-8"
+},
+
+body:JSON.stringify({
+
+accion:"eliminar",
+
+id:idDoc
+
+})
+
+});
+
+
+const result =
+await response.json();
+
+
+if(!result.ok){
+
+alert(result.mensaje);
+
+return;
+
+}
+
+
+alert("Cita eliminada correctamente.");
+
+loadAdminData();
+
+loadOccupiedHours();
+
+
+}catch(error){
+
+alert(
+"Error al eliminar la cita."
+);
+
+}
+
+}
+
+
+// ========================================
+// SEGURIDAD PARA MOSTRAR TEXTO
+// ========================================
+
+function escapeHtml(text){
+
+return String(text ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+</script>
+
+</body>
+</html>
+```
